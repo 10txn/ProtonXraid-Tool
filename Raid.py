@@ -13,7 +13,7 @@ ______          _             __   __          _     _
 | |  | | | (_) | || (_) | | | / /^\ \ | | (_| | | (_| |
 \_|  |_|  \___/ \__\___/|_| |_\/   \/_|  \__,_|_|\__,_|
 
-                  made by exctasy
+              made by 10txn (in beta)
 """)
 
         print("\nProtonXraid menu:")
@@ -25,14 +25,14 @@ ______          _             __   __          _     _
         choice = input("\nEnter your choice (1-4): ")
             
         if choice == '1':
-            print("This is currently broken and being worked on.")
-            #bot_raid()
+            #print("This is currently broken and being worked on.")
+            bot_raid()
         elif choice == '2':
             spam_webhook()
         elif choice == '3':
             del_webhook()
         elif choice == '4':
-            print("Exiting... Goodbye!")
+            print("Exiting...")
             break
         else:
             print("Invalid choice. Please try again.")
@@ -48,9 +48,9 @@ def bot_raid():
     intents.message_content = True  # Required for bots to read messages content in interactions
     bot = commands.Bot(command_prefix='!', intents=intents)
 
-    # Define the bot command for deleting channels
+    # Delete all channels bot has access to
     @bot.command()
-    async def delchans(ctx):
+    async def channelraid(ctx):
         try:
             if not ctx.author.guild_permissions.administrator:
                 await ctx.send("You do not have permission to delete channels!")
@@ -62,6 +62,67 @@ def bot_raid():
             await ctx.send("All channels have been deleted.")
         except Exception as e:
             await ctx.send(f"Failed to delete channels: {e}")
+
+    # Deletes all categories bot has access to 
+    @bot.command()
+    async def categoryraid(ctx):
+        try:
+            if not ctx.author.guild_permissions.administrator:
+                await ctx.send("You do not have permission to delete categories!")
+                return
+
+            # Deleting all categories
+            for category in ctx.guild.categories:
+                await category.delete()
+
+            await ctx.send("All categories have been deleted.")
+        except Exception as e:
+            await ctx.send(f"Failed to delete categories: {e}")
+
+    # Change server name
+    @bot.command()
+    async def change_server_name(ctx, *, new_name: str):
+        try:
+            if not ctx.author.guild_permissions.administrator:
+                await ctx.send("You do not have permission to change the server name!")
+                return
+
+            await ctx.guild.edit(name=new_name)
+            await ctx.send(f"Server name changed to: {new_name}")
+        except Exception as e:
+            await ctx.send(f"Failed to change the server name: {e}")
+
+    # Delete all roles
+    @bot.command()
+    async def delete_roles(ctx):
+        try:
+            if not ctx.author.guild_permissions.administrator:
+                await ctx.send("You do not have permission to delete roles!")
+                return
+
+            # Deleting all roles except @everyone
+            for role in ctx.guild.roles:
+                if role.name != "@everyone":
+                    await role.delete()
+
+            await ctx.send("All roles (except @everyone) have been deleted.")
+        except Exception as e:
+            await ctx.send(f"Failed to delete roles: {e}")
+
+    @bot.command()
+    async def create_channels(ctx, *, channel_name: str):
+        try:
+            if not ctx.author.guild_permissions.administrator:
+                await ctx.send("You do not have permission to create channels!")
+                return
+
+            # Create 50 channels with the specified name
+            for i in range(1, 200):
+                await ctx.guild.create_text_channel(f"{channel_name}")
+
+            await ctx.send(f"200 channels created!")
+        except Exception as e:
+            await ctx.send(f"Failed to create channels: {e}")
 
     # Run the bot
     try:
